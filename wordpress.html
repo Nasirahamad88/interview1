@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Password</title>
+    <style>
+        /* General text color for reset password page */
+        body, p, label, input, a {
+            color: #007d00; /* Green text color */
+            font-family: Arial, sans-serif;
+        }
+
+        /* Container */
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Form styles */
+        form {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        /* Save button styles */
+        button {
+            color: #ffffff;
+            background-color: #007d00;
+            border-color: #007d00;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        /* Adjust button hover state */
+        button:hover {
+            background-color: #005a00;
+            border-color: #005a00;
+        }
+
+        /* Password requirements text */
+        .custom-password-requirements {
+            margin-top: 10px;
+            font-size: 16px;
+            color: #007d00;
+        }
+
+        /* Password strength meter styles */
+        .password-strength-meter {
+            margin-top: 10px;
+            font-size: 16px;
+            color: #007d00;
+        }
+
+        .password-strength-meter.weak {
+            color: red; /* Red for weak passwords */
+        }
+
+        .password-strength-meter.medium {
+            color: orange; /* Orange for medium passwords */
+        }
+
+        .password-strength-meter.strong {
+            color: green; /* Green for strong passwords */
+        }
+
+        /* Missing requirements text */
+        .missing-requirements {
+            margin-top: 5px;
+            font-size: 14px;
+            color: red; /* Red for missing requirements */
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Reset Your Password</h2>
+    <form id="reset-password-form">
+        <label for="password_1">New Password:</label>
+        <input type="password" id="password_1" name="password_1" placeholder="Enter your new password" required>
+
+        <!-- Password strength meter and requirements -->
+        <p class="custom-password-requirements">Password must be at least 8 characters long, include both lowercase and uppercase letters, at least one number, and one special character.</p>
+        <div class="password-strength-meter">Password strength</div>
+        <p class="missing-requirements">Password is missing the following requirements:</p>
+
+        <button type="submit">Save</button>
+    </form>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var passwordField = document.getElementById("password_1");
+        var strengthMeter = document.querySelector(".password-strength-meter");
+        var missingRequirements = document.querySelector(".missing-requirements");
+
+        // Update the strength meter and missing requirements as the user types
+        passwordField.addEventListener("input", function() {
+            var strength = calculatePasswordStrength(passwordField.value);
+            var strengthText;
+            var missingText = "";
+
+            // Check for missing requirements and update messages
+            if (passwordField.value.length < 8) {
+                missingText += "• At least 8 characters long\n";
+            }
+            if (!/[a-z]/.test(passwordField.value)) {
+                missingText += "• Must contain at least one lowercase letter\n";
+            }
+            if (!/[A-Z]/.test(passwordField.value)) {
+                missingText += "• Must contain at least one uppercase letter\n";
+            }
+            if (!/[0-9]/.test(passwordField.value)) {
+                missingText += "• Must contain at least one number\n";
+            }
+            if (!/[^A-Za-z0-9]/.test(passwordField.value)) {
+                missingText += "• Must contain at least one special character\n";
+            }
+
+            // Show or hide the missing requirements
+            if (missingText === "") {
+                missingRequirements.style.display = "none";
+            } else {
+                missingRequirements.style.display = "block";
+                missingRequirements.textContent = "Password is missing the following requirements:\n" + missingText;
+            }
+
+            // Update strength meter text based on password strength
+            switch (strength) {
+                case 0:
+                    strengthText = "Very weak - please enter a stronger password";
+                    strengthMeter.className = "password-strength-meter weak";
+                    break;
+                case 1:
+                    strengthText = "Weak";
+                    strengthMeter.className = "password-strength-meter weak";
+                    break;
+                case 2:
+                    strengthText = "Medium";
+                    strengthMeter.className = "password-strength-meter medium";
+                    break;
+                case 3:
+                    strengthText = "Strong";
+                    strengthMeter.className = "password-strength-meter strong";
+                    break;
+                case 4:
+                    strengthText = "Very strong";
+                    strengthMeter.className = "password-strength-meter strong";
+                    break;
+            }
+
+            strengthMeter.textContent = strengthText;
+        });
+
+        // Simple password strength calculation
+        function calculatePasswordStrength(password) {
+            var strength = 0;
+            if (password.length >= 8) strength++;
+            if (/[a-z]/.test(password)) strength++;
+            if (/[A-Z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            if (/[^A-Za-z0-9]/.test(password)) strength++;
+            return strength;
+        }
+    });
+</script>
+
+</body>
+</html>
